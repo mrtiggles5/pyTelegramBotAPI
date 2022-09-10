@@ -34,7 +34,14 @@ class SessionManager:
 
 
     async def create_session(self):
-        self.session = aiohttp.ClientSession(connector = ProxyConnector.from_url('socks5://127.0.0.1:9050'), limit = REQUEST_LIMIT, ssl_context = self.ssl_context)
+        prox_conn = ProxyConnector(
+            proxy_type = ProxyType.SOCKS5, 
+            host='127.0.0.1', 
+            port='9050', 
+            limit=REQUEST_LIMIT,
+            ssl_context=self.ssl_context
+        )
+        self.session = aiohttp.ClientSession(connector = prox_conn)
         return self.session
 
     async def get_session(self):
