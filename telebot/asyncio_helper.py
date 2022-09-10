@@ -34,16 +34,7 @@ class SessionManager:
 
 
     async def create_session(self):
-        if 'socks5' in proxy: 
-            self.session = aiohttp.ClientSession(connector = ProxyConnector.from_url(proxy), limit = REQUEST_LIMIT, ssl_context = self.ssl_context)
-            proxy = None
-        else: 
-            self.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(
-            limit=REQUEST_LIMIT,
-            ssl_context=self.ssl_context
-        ))
-
-
+        self.session = aiohttp.ClientSession(connector = ProxyConnector.from_url('socks5://127.0.0.1:9050'), limit = REQUEST_LIMIT, ssl_context = self.ssl_context)
         return self.session
 
     async def get_session(self):
@@ -95,7 +86,7 @@ async def _process_request(token, url, method='get', params=None, files=None, **
 
         conn = None
         try:
-            async with session.request(method=method, url=API_URL.format(token, url), data=params, timeout=timeout, proxy=proxy) as resp:
+            async with session.request(method=method, url=API_URL.format(token, url), data=params, timeout=timeout, proxy=None) as resp:
                 got_result = True
                 logger.debug("Request: method={0} url={1} params={2} files={3} request_timeout={4} current_try={5}".format(method, url, params, files, request_timeout, current_try).replace(token, token.split(':')[0] + ":{TOKEN}"))
                 
